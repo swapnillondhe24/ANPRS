@@ -1,0 +1,3 @@
+[submodule "frontend/video-upload"]
+	path = frontend/video-upload
+	url = https://github.com/adarsh45/video-upload
