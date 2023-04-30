@@ -190,16 +190,10 @@ def write_to_file(file_path, lines):
         for line in lines:
             f.write(line + '\n')
 
-def detect_live(flag):
-    print("Started Live Detection")
-    if flag == 1:
-        cap.release()
-        cv2.destroyAllWindows()
-        exit(0)
-
+def detect_live(file):
     import re
     state_list = ("AN","AP","AR","AS","BH","BR","CH","CG","DD","DL","GA","GJ","HR","HP","JK","JH","KA","KL","LA","LD","MP","MH","MN","ML","MZ","NL","OD","PY","PB","RJ","SK","TN","TS","TR","UP","UK","WB")
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(file)
     text_results = []
     while cap.isOpened():
         ret, frame = cap.read()
@@ -207,10 +201,6 @@ def detect_live(flag):
         if ret == False:
             print('Unable to read video or it ended')
             break
-
-        for i in range(3):
-                ret = cap.grab()
-    
 
         results, texts = yolo_predictions(frame,net)
         # print(texts)
@@ -223,22 +213,16 @@ def detect_live(flag):
         if texts_filtered:
           # texts = texts.split(" ")
           # print(texts_filtered)
-          if set(texts_filtered[:3]) == set(["IND","TND","TNO", "INO", "INDIA", "INOIA", "INDIAN", "INOIAN", "INDIANA", "INOIANA"]) :
-            texts_filtered = texts_filtered[3:]
           if texts_filtered[:2] in state_list:
-            if re.match(r'[A-Za-z]{2}\d{2}[A-Za-z\d]{2}\d{4}', texts_filtered):
-                    # print(texts_filtered)
+            if re.match(r'[A-Z\d]{3,4}[A-Z\d]{2}\d{4}', texts_filtered):
+                    print(texts_filtered)
                     text_results.append(texts_filtered)
-                    print(text_results)
-                    # yield text_results
-
-        cv2.imshow('Number Plate Detection',results)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-    
-    cap.release()
-    cv2.destroyAllWindows()
         
+        # for i in range(2):
+        #         ret = cap.grab()
+    
+    print(text_results)
+    return set(text_results)        
     
    
 

@@ -54,7 +54,7 @@ class detectLive(Resource):
             video_filename = "Live.jpeg"
             video_path = os.path.join(app.root_path, UPLOAD_DIR, video_filename)
 
-            plates = detect(video_path)
+            plates = detect_live(video_path)
 
             ret = json.dumps({"status" : "success","plates" : list(plates)})
             # print(ret)
