@@ -9,6 +9,10 @@ from werkzeug.utils import secure_filename
 from flask_cors import CORS
 import json
 
+import base64
+from PIL import Image
+import io
+
 import requests
 
 
@@ -29,27 +33,44 @@ UPLOAD_DIR = "testing"
 app.config['UPLOAD_FOLDER'] = UPLOAD_DIR
 
 
-class startCamera(Resource):
+class detectLive(Resource):
    
     def post(self):
         try:
-            return Response(detect_live(0), mimetype='text/event-stream')
+            # print("get data : ",request.get_data())
+
+            # video_file = request.get_data()
+
+            encoded_data = request.form['video']
+            # print(encoded_data)
+            # print(decoded_data)
+
+            img = encoded_data.split(',')[1]
+            decoded_data = base64.b64decode(img)
+
+            image = Image.open(io.BytesIO(decoded_data))
+            image.save("./testing/Live.jpeg", "JPEG")
+
+            video_filename = "Live.jpeg"
+            video_path = os.path.join(app.root_path, UPLOAD_DIR, video_filename)
+
+            plates = detect(video_path)
+
+            ret = json.dumps({"status" : "success","plates" : list(plates)})
+            # print(ret)
+            return Response(ret)
+
+
+        
         except Exception as error:
             print(error)
 
-
-class stopCamera(Resource):
-   
-    def post(self):
-        try:
-            return Response(detect_live(1), mimetype='text/event-stream')
-        except Exception as error:
-            print(error)
 
 class uploadVideo(Resource):
     
     def post(self):
         try:
+
             video_file = request.files['video']
 
             video_filename = secure_filename(video_file.filename)
@@ -68,8 +89,7 @@ class uploadVideo(Resource):
 
 
 api.add_resource(uploadVideo, '/uploadvideo')
-api.add_resource(startCamera, '/startcamera')
-api.add_resource(stopCamera, '/stopcamera')
+api.add_resource(detectLive, '/detectlive')
 
 
 if __name__ == '__main__':

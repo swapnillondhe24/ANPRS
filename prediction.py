@@ -163,10 +163,6 @@ def detect(file):
             print('Unable to read video or it ended')
             break
 
-        for i in range(2):
-                ret = cap.grab()
-    
-
         results, texts = yolo_predictions(frame,net)
         # print(texts)
         # print(texts)
@@ -179,9 +175,12 @@ def detect(file):
           # texts = texts.split(" ")
           # print(texts_filtered)
           if texts_filtered[:2] in state_list:
-            if re.match(r'[A-Za-z]{2}\d{2}[A-Za-z\d]{2}\d{4}', texts_filtered):
-                    # print(texts_filtered)
+            if re.match(r'[A-Z\d]{3,4}[A-Z\d]{2}\d{4}', texts_filtered):
+                    print(texts_filtered)
                     text_results.append(texts_filtered)
+        
+        for i in range(2):
+                ret = cap.grab()
     
     print(text_results)
     return set(text_results)
