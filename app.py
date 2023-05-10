@@ -77,6 +77,7 @@ class uploadVideo(Resource):
 
             # ret = json.dumps({"status" : "success","plates" : list(plates)})
             ret = plates
+            print(ret)
             # print(ret)
             return Response(ret)
         
@@ -92,4 +93,4 @@ api.add_resource(detectLive, '/detectlive')
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5009)
-    # app.run(debug=False)
+    app.run(debug=False)

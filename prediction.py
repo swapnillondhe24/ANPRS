@@ -9,6 +9,14 @@ import pymongo
 # Replace the placeholders with your connection string and database name
 connection_string = "mongodb+srv://Admin:Admin@anprs.csdqtst.mongodb.net/?retryWrites=true&w=majority"
 db_name = "ANPRS"
+# Create a MongoClient object with the connection string
+client = pymongo.MongoClient(connection_string)
+
+    # Access the database using the client and database name
+db = client[db_name]
+
+    # Access a collection and query for a document by LP_number
+collection = db["LicensePlates"]
 
 
 
@@ -168,6 +176,7 @@ def detect(file):
                     print(texts_filtered)
                     text_results.append(texts_filtered)
                     name = find_document(texts_filtered)
+                    print(name)
                     if name:
                         return {"status" : "success","data" : name}
 
@@ -217,6 +226,7 @@ def detect_live(file):
                     print(texts_filtered)
                     text_results.append(texts_filtered)
                     name = find_document(texts_filtered)
+                    print(name)
                     if name:
                         return {"status" : "success","data" : name}
 
@@ -233,27 +243,25 @@ def detect_live(file):
     return {"status" : "success","data" : return_frame}       
     
 def find_document(lp_number):
-    # Create a MongoClient object with the connection string
-    client = pymongo.MongoClient(connection_string)
+    
 
-    # Access the database using the client and database name
-    db = client[db_name]
-
-    # Access a collection and query for a document by LP_number
-    collection = db["my_collection"]
+    # lp_number = '"'+lp_number+'"'
     query = {"LP_number": lp_number}
     
-    document = collection.find_one(query)
+    documents = collection.find(query)
+    print("Document found: ", documents)
 
     # If the document exists, return Name and LP_number
-    if document:
-        return {
+    ret = []
+    for document in documents:
+        print("document name",document['Name'])
+        ret.append({
             "Name" : document["Name"],
             "Plate": document["LP_number"]
-            }
+        })
 
     # If the document does not exist, return None
-    return None
+    return ret
 
 
 if __name__ == "__main__":

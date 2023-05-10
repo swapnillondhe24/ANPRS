@@ -18,6 +18,8 @@ collection = db["LicensePlates"]
 # print("The following collections are available", db.list_collection_names())
 documents = collection.find({"LP_number": "MH12LJ3236"})
 # print("The following documents are available in the collection:", collection.name)
+texts_filtered = 'MH12LJ3236'
+name = find_document(texts_filtered)
 # print(documents)
 for i in documents:
     print(i['Name'],"Owns",i['LP_number'])
