@@ -178,8 +178,9 @@ def detect(file):
     
     print(text_results)
     return_frame = {
-            "Name" : "",
-            "Plate": set(text_results)}
+            "Name" : "Unknown",
+            "Plate": set(text_results)
+            }
     # {"status" : "success","plates" : list(plates)}
     return {"status" : "success","data" : return_frame}
 
@@ -241,13 +242,15 @@ def find_document(lp_number):
     # Access a collection and query for a document by LP_number
     collection = db["my_collection"]
     query = {"LP_number": lp_number}
+    
     document = collection.find_one(query)
 
     # If the document exists, return Name and LP_number
     if document:
         return {
             "Name" : document["Name"],
-            "Plate": document["LP_number"]}
+            "Plate": document["LP_number"]
+            }
 
     # If the document does not exist, return None
     return None
