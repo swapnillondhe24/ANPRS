@@ -4,22 +4,11 @@ from matplotlib import pyplot as plt
 import cv2
 import numpy as np
 import easyocr
-# import pandas as pd
-# import tensorflow as tf
-# import pytesseract as pt
-# import plotly.express as px
-# import matplotlib.pyplot as plt
-# import xml.etree.ElementTree as xet
+import pymongo
 
-# from glob import glob
-# from skimage import io
-# from shutil import copy
-# from tensorflow.keras.models import Model
-# from tensorflow.keras.callbacks import TensorBoard
-# from sklearn.model_selection import train_test_split
-# from tensorflow.keras.applications import InceptionResNetV2
-# from tensorflow.keras.layers import Dense, Dropout, Flatten, Input
-# from tensorflow.keras.preprocessing.image import load_img, img_to_array
+# Replace the placeholders with your connection string and database name
+connection_string = "mongodb+srv://Admin:Admin@anprs.csdqtst.mongodb.net/?retryWrites=true&w=majority"
+db_name = "ANPRS"
 
 
 
@@ -178,12 +167,21 @@ def detect(file):
             if re.match(r'[A-Z\d]{3,4}[A-Z\d]{2}\d{4}', texts_filtered):
                     print(texts_filtered)
                     text_results.append(texts_filtered)
+                    name = find_document(texts_filtered)
+                    if name:
+                        return {"status" : "success","data" : name}
+
+                    # {"status" : "success","plates" : list(plates)}
         
         for i in range(2):
                 ret = cap.grab()
     
     print(text_results)
-    return set(text_results)
+    return_frame = {
+            "Name" : "",
+            "Plate": set(text_results)}
+    # {"status" : "success","plates" : list(plates)}
+    return {"status" : "success","data" : return_frame}
 
 def write_to_file(file_path, lines):
     with open(file_path, 'w') as f:
@@ -217,55 +215,43 @@ def detect_live(file):
             if re.match(r'[A-Z\d]{3,4}[A-Z\d]{2}\d{4}', texts_filtered):
                     print(texts_filtered)
                     text_results.append(texts_filtered)
+                    name = find_document(texts_filtered)
+                    if name:
+                        return {"status" : "success","data" : name}
+
+                    # {"status" : "success","plates" : list(plates)}
         
-        # for i in range(2):
-        #         ret = cap.grab()
+        for i in range(2):
+                ret = cap.grab()
     
     print(text_results)
-    return set(text_results)        
+    return_frame = {
+            "Name" : "",
+            "Plate": set(text_results)}
+    # {"status" : "success","plates" : list(plates)}
+    return {"status" : "success","data" : return_frame}       
     
-   
+def find_document(lp_number):
+    # Create a MongoClient object with the connection string
+    client = pymongo.MongoClient(connection_string)
+
+    # Access the database using the client and database name
+    db = client[db_name]
+
+    # Access a collection and query for a document by LP_number
+    collection = db["my_collection"]
+    query = {"LP_number": lp_number}
+    document = collection.find_one(query)
+
+    # If the document exists, return Name and LP_number
+    if document:
+        return {
+            "Name" : document["Name"],
+            "Plate": document["LP_number"]}
+
+    # If the document does not exist, return None
+    return None
 
 
 if __name__ == "__main__":
     detect_live()
-    # import re
-    # state_list = ("AN","AP","AR","AS","BH","BR","CH","CG","DD","DL","GA","GJ","HR","HP","JK","JH","KA","KL","LA","LD","MP","MH","MN","ML","MZ","NL","OD","PY","PB","RJ","SK","TN","TS","TR","UP","UK","WB")
-    # cap = cv2.VideoCapture('./testing/TEST3.mp4')
-    # text_results = []
-    # while cap.isOpened():
-    #     ret, frame = cap.read()
-
-    #     if ret == False:
-    #         print('Unable to read video or it ended')
-    #         break
-
-    #     for i in range(5):
-    #             ret = cap.grab()
-    
-
-    #     results, texts = yolo_predictions(frame,net)
-    #     # print(texts)
-    #     # print(texts)
-    #     texts = [text.upper() for text in texts]
-    #     texts = ''.join(texts)
-
-    #     texts_filtered = re.sub(r'\W+', '', texts)
-    #     # print(texts_filtered)
-    #     if texts_filtered:
-    #       # texts = texts.split(" ")
-    #       # print(texts_filtered)
-    #       if texts_filtered[:2] in state_list:
-    #         if re.match(r'[A-Za-z]{2}\d{2}[A-Za-z\d]{2}\d{4}', texts_filtered):
-    #                 # print(texts_filtered)
-    #                 text_results.append(texts_filtered)
-    #                 # print(texts_filtered)
-
-    #       # text_results.append(texts)
-    #     # print(texts)
-    #     # frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    #     # plt.imshow(frame_rgb)
-    #     # plt.show()
-    # print(set(text_results))
-    # cv2.destroyAllWindows()
-    # cap.release()

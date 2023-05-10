@@ -27,23 +27,23 @@ cors = CORS(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['CORS_HEADERS'] = 'Content-Type'
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 megabyte upload limit for files you can change it to upload large files
+
+
 
 UPLOAD_DIR = "testing"
 app.config['UPLOAD_FOLDER'] = UPLOAD_DIR
+
+
 
 
 class detectLive(Resource):
    
     def post(self):
         try:
-            # print("get data : ",request.get_data())
-
-            # video_file = request.get_data()
 
             encoded_data = request.form['video']
-            # print(encoded_data)
-            # print(decoded_data)
+
 
             img = encoded_data.split(',')[1]
             decoded_data = base64.b64decode(img)
@@ -60,8 +60,6 @@ class detectLive(Resource):
             # print(ret)
             return Response(ret)
 
-
-        
         except Exception as error:
             print(error)
 
@@ -72,13 +70,13 @@ class uploadVideo(Resource):
         try:
 
             video_file = request.files['video']
-
             video_filename = secure_filename(video_file.filename)
             video_path = os.path.join(app.root_path, UPLOAD_DIR, video_filename)
             video_file.save(video_path)
             plates = detect(video_path)
 
-            ret = json.dumps({"status" : "success","plates" : list(plates)})
+            # ret = json.dumps({"status" : "success","plates" : list(plates)})
+            ret = plates
             # print(ret)
             return Response(ret)
         
