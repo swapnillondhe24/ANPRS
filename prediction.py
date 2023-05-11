@@ -226,7 +226,6 @@ def detect_live(file):
                     print(texts_filtered)
                     text_results.append(texts_filtered)
                     name = find_document(texts_filtered)
-                    print(name)
                     if name:
                         return {"status" : "success","data" : name}
 
@@ -249,12 +248,10 @@ def find_document(lp_number):
     query = {"LP_number": lp_number}
     
     documents = collection.find(query)
-    print("Document found: ", documents)
 
     # If the document exists, return Name and LP_number
     ret = []
     for document in documents:
-        print("document name",document['Name'])
         ret.append({
             "Name" : document["Name"],
             "Plate": document["LP_number"]

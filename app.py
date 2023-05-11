@@ -27,7 +27,7 @@ cors = CORS(app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['CORS_HEADERS'] = 'Content-Type'
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 megabyte upload limit for files you can change it to upload large files
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 16 megabyte upload limit for files you can change it to upload large files
 
 
 
@@ -58,7 +58,7 @@ class detectLive(Resource):
 
             ret = json.dumps({"status" : "success","plates" : list(plates)})
             # print(ret)
-            return Response(ret)
+            return ret
 
         except Exception as error:
             print(error)
@@ -79,7 +79,7 @@ class uploadVideo(Resource):
             ret = plates
             print(ret)
             # print(ret)
-            return Response(ret)
+            return ret
         
         except Exception as error:
             print(error)
