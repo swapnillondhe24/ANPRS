@@ -56,9 +56,9 @@ class detectLive(Resource):
 
             plates = detect_live(video_path)
 
-            ret = json.dumps({"status" : "success","plates" : list(plates)})
+            # ret = json.dumps({"status" : "success","plates" : list(plates)})
             # print(ret)
-            return ret
+            return plates
 
         except Exception as error:
             print(error)

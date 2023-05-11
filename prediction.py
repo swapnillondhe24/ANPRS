@@ -176,7 +176,6 @@ def detect(file):
                     print(texts_filtered)
                     text_results.append(texts_filtered)
                     name = find_document(texts_filtered)
-                    print(name)
                     if name:
                         return {"status" : "success","data" : name}
 
@@ -235,9 +234,9 @@ def detect_live(file):
                 ret = cap.grab()
     
     print(text_results)
-    return_frame = {
+    return_frame = [{
             "Name" : "",
-            "Plate": set(text_results)}
+            "Plate": set(text_results)}]
     # {"status" : "success","plates" : list(plates)}
     return {"status" : "success","data" : return_frame}       
     
